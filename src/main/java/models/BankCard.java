@@ -4,68 +4,69 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class BankCard implements Serializable {
-    private Long id;
-    private Client client;
-    private Account account;
-    private Long number;
-    private Long amount;
+    private Integer id;
+    private Integer ownerId;
+    private Integer cardAccId;
+    private String number;
+    private Integer amount;
 
-    public BankCard(Long id, Client client, Account account, Long number, Long amount) {
+    public BankCard(Integer id, Integer ownerId, Integer cardAccId, String number, Integer amount) {
         this.id = id;
-        this.client = client;
-        this.account = account;
+        this.ownerId = ownerId;
+        this.cardAccId = cardAccId;
         this.number = number;
         this.amount = amount;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Client getClient() {
-        return client;
+    public Integer getOwnerId() {
+        return ownerId;
     }
-    public void setClient(Client client) {
-        this.client = client;
-    }
+    public void setOwnerId(Client client) { this.ownerId = ownerId; }
 
-    public Account getAccount() {
-        return account;
+    public Integer getCardAccId() {
+        return cardAccId;
     }
     public void setAccount(Account account) {
-        this.account = account;
+        this.cardAccId = cardAccId;
     }
 
-    public Long getNumber() {
+    public String getNumber() {
         return number;
     }
-    public void setNumber(Long number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
-    public Long getAmount() { return amount; }
-    public void setAmount(Long amount) { this.amount = amount; }
+    public Integer getAmount() { return amount; }
+    public void setAmount(Integer amount) { this.amount = amount; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BankCard bankCard = (BankCard) o;
-        return Objects.equals(id, bankCard.id) && Objects.equals(client, bankCard.client) && Objects.equals(account, bankCard.account) && Objects.equals(number, bankCard.number) && Objects.equals(amount, bankCard.amount);
+        return Objects.equals(id, bankCard.id) && Objects.equals(ownerId, bankCard.ownerId) &&
+               Objects.equals(cardAccId, bankCard.cardAccId) && Objects.equals(number, bankCard.number) &&
+               Objects.equals(amount, bankCard.amount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, client, account, number, amount);
+        return Objects.hash(id, ownerId, cardAccId, number, amount);
     }
 
     @Override
     public String toString() {
-        return "{ BankCard id= " + id +
-                "\nnumber= " + number +
-                "\namount= " + amount + " }";
+        return "\n{\n\"id\": " + id +
+                "\n\"Account ID\": " + cardAccId +
+                "\n\"number\": " + number +
+                "\n\"amount\": " + amount + "\n}";
     }
 }

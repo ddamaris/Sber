@@ -11,8 +11,9 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
 }
-
-mainClassName = 'Bank'
+application {
+    mainClassName = 'Bank'
+}
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
@@ -20,6 +21,17 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.13.1'
     compile group: 'com.h2database', name: 'h2', version: '1.4.200'
 }
+
+jar {
+    manifest {
+        attributes "Main-Class": "Bank"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+   }
+}
+
 
 test {
     useJUnitPlatform()
