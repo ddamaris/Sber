@@ -1,7 +1,10 @@
+package models;
+
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public class Client {
+public class Client implements Serializable {
     private String name;
     private Long id;
     private List<Account> accountsList;
@@ -63,7 +66,7 @@ public class Client {
 
     @Override
     public String toString() {
-        return "Client{" +
+        return "models.Client{" +
                 "name='" + name + '\'' +
                 ", id=" + id +
                 ", accounts=" + accountsList +
