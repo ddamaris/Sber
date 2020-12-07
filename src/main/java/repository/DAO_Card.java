@@ -8,7 +8,8 @@ import java.util.List;
 
 public class DAO_Card implements DAO<BankCard> {
 
-    private  JdbcDataSource dataSource = new JdbcDataSource();
+    private final JdbcDataSource dataSource;
+
     public DAO_Card(JdbcDataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -33,8 +34,10 @@ public class DAO_Card implements DAO<BankCard> {
                 Integer cardAcc = resultSet.getInt("card_acc");
                 String cardNumber = resultSet.getString("card_number");
                 Integer amount = resultSet.getInt("amount");
+                connection.close();
                 return new BankCard(card, cardOwner, cardAcc, cardNumber, amount);
             }
+            connection.close();
             return null;
         } catch (SQLException e) {
             throw new IllegalStateException(e);
@@ -42,26 +45,28 @@ public class DAO_Card implements DAO<BankCard> {
             if (resultSet != null) {
                 try {
                     resultSet.close();
+                } catch (SQLException ignored) {
                 }
-                catch (SQLException ignored) {}
             }
             if (statement != null) {
                 try {
                     statement.close();
-                } catch (SQLException ignored) {}
+                } catch (SQLException ignored) {
+                }
             }
             if (connection != null) {
                 try {
                     connection.close();
-                } catch (SQLException ignored) {}
+                } catch (SQLException ignored) {
+                }
             }
         }
     }
 
     @Override
-    public List<BankCard> getAll(Integer ownerId) {
+    public List<BankCard> getAllForClientById(Integer ownerId, Integer accId) {
 
-        final String SQL_FIND_ALL = "SELECT * FROM card WHERE card_owner = ?";
+        final String SQL_FIND_ALL = "SELECT * FROM card WHERE card_owner = ? AND card_acc= ?";
         List<BankCard> cards = new ArrayList<>();
         Connection connection = null;
         PreparedStatement statement = null;
@@ -71,6 +76,7 @@ public class DAO_Card implements DAO<BankCard> {
             connection = dataSource.getConnection();
             statement = connection.prepareStatement(SQL_FIND_ALL);
             statement.setInt(1, ownerId);
+            statement.setInt(2, accId);
             resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
@@ -88,18 +94,20 @@ public class DAO_Card implements DAO<BankCard> {
             if (resultSet != null) {
                 try {
                     resultSet.close();
+                } catch (SQLException ignored) {
                 }
-                catch (SQLException ignored) {}
             }
             if (statement != null) {
                 try {
                     statement.close();
-                } catch (SQLException ignored) {}
+                } catch (SQLException ignored) {
+                }
             }
             if (connection != null) {
                 try {
                     connection.close();
-                } catch (SQLException ignored) {}
+                } catch (SQLException ignored) {
+                }
             }
         }
     }
@@ -118,7 +126,6 @@ public class DAO_Card implements DAO<BankCard> {
             statement.setInt(2, card.getCardAccId());
             statement.setString(3, card.getNumber());
             statement.setInt(4, card.getAmount());
-
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -127,12 +134,14 @@ public class DAO_Card implements DAO<BankCard> {
             if (statement != null) {
                 try {
                     statement.close();
-                } catch (SQLException ignored) {}
+                } catch (SQLException ignored) {
+                }
             }
             if (connection != null) {
                 try {
                     connection.close();
-                } catch (SQLException ignored) {}
+                } catch (SQLException ignored) {
+                }
             }
         }
     }
@@ -156,42 +165,66 @@ public class DAO_Card implements DAO<BankCard> {
             if (statement != null) {
                 try {
                     statement.close();
-                } catch (SQLException ignored) {}
+                } catch (SQLException ignored) {
+                }
             }
             if (connection != null) {
                 try {
                     connection.close();
-                } catch (SQLException ignored) {}
+                } catch (SQLException ignored) {
+                }
             }
         }
     }
 
     @Override
-    public void update(Integer cardId, String[] params){
-        final String SQL_UPDATE = "UPDATE card SET amount=? where id =?";
+    public void update(Integer cardId, String[] params) {
+        final String SQL_CARD_UPDATE = "UPDATE card SET amount=? WHERE id =?";
+        final String SQL_ACCOUNT = "SELECT * FROM account WHERE id =?";
+        final String SQL_ACCOUNT_UPDATE = "UPDATE account SET amount=? WHERE id =?";
         Connection connection = null;
         PreparedStatement statement = null;
+        ResultSet resultSet = null;
 
         try {
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement(SQL_UPDATE);
+            statement = connection.prepareStatement(SQL_CARD_UPDATE);
             statement.setInt(1, Integer.parseInt(params[0]));
             statement.setInt(2, cardId);
-
             statement.executeUpdate();
+            statement = connection.prepareStatement(SQL_ACCOUNT);
+            statement.setInt(1, Integer.parseInt(params[1]));
+            resultSet = statement.executeQuery();
 
+            if (resultSet.next()) {
+                Integer accAmount = resultSet.getInt("amount");
+                Integer accId = resultSet.getInt("id");
+                accAmount += Integer.parseInt(params[0]);
+                statement = connection.prepareStatement(SQL_ACCOUNT_UPDATE);
+                statement.setInt(1, accAmount);
+                statement.setInt(2, accId);
+                statement.executeUpdate();
+            }
         } catch (SQLException e) {
             throw new IllegalStateException(e);
         } finally {
             if (statement != null) {
                 try {
                     statement.close();
-                } catch (SQLException ignored) {}
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException ignored) {}
+                } catch (SQLException ignored) {
+                }
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (SQLException ignored) {
+                    }
+                }
+                if (resultSet != null) {
+                    try {
+                        resultSet.close();
+                    } catch (SQLException ignored) {
+                    }
+                }
             }
         }
     }
