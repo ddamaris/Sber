@@ -9,7 +9,6 @@ import java.util.List;
 public class Bank {
     public static void main(String[] args) throws SQLException, InterruptedException, ClassNotFoundException {
 
-        List<BankCard> bankCards = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
 
         JdbcDataSource ds = new JdbcDataSource();
@@ -19,8 +18,12 @@ public class Bank {
         init.init();
 
         DAO<BankCard> card = new DAO_Card(ds);
+        DAO<Account> account = new DAO_Account(ds);
+
         System.out.println(card.get(1));
         System.out.println(card.getAllForClientById(1, 1));
+        account.add(new Account(0, 1, 55555, 100500));
+        System.out.println(account.getAllForClientById(1,1));
         card.add(new BankCard(0, 1, 1, "1111 1111 1111 2222", 234));
         System.out.println(card.getAllForClientById(1, 1));
         System.out.println("Amount for cardId: 4 = " + card.get(4).getAmount());

@@ -64,9 +64,6 @@ public class BankCard implements Serializable {
 
     @Override
     public String toString() {
-        return "\n{\n\"id\": " + id +
-                "\n\"Account ID\": " + cardAccId +
-                "\n\"number\": " + number +
-                "\n\"amount\": " + amount + "\n}";
+        return "{\"id\": " + id + ", \"account\": " + cardAccId + ", \"number\": " + number + ", \"amount\": " + amount + "}";
     }
 }
