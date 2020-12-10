@@ -1,39 +1,54 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@JsonInclude
 public class BankCard implements Serializable {
-    private Integer id;
-    private Integer ownerId;
-    private Integer cardAccId;
+    private int id;
+    private int ownerId;
+    private int cardAccId;
     private String number;
-    private Integer amount;
+    private int amount;
 
-    public BankCard(Integer id, Integer ownerId, Integer cardAccId, String number, Integer amount) {
+//    public BankCard(@JsonProperty Integer id, @JsonProperty Integer ownerId, @JsonProperty Integer cardAccId,
+//                    @JsonProperty String number, @JsonProperty Integer amount) {
+
+//    @JsonIgnoreProperties(ignoreUnknown = true)
+    public BankCard(int id, int ownerId, int cardAccId, String number, int amount) {
+//    public BankCard(@JsonProperty int id, @JsonProperty int ownerId, @JsonProperty int cardAccId,
+//                    @JsonProperty String number, @JsonProperty int amount) {
         this.id = id;
         this.ownerId = ownerId;
         this.cardAccId = cardAccId;
         this.number = number;
         this.amount = amount;
     }
+    public BankCard(){
+        super();
+    }
 
     public Integer getId() {
         return id;
     }
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
     public Integer getOwnerId() {
         return ownerId;
     }
-    public void setOwnerId(Client client) { this.ownerId = ownerId; }
+    public void setOwnerId(int ownerId) { this.ownerId = ownerId; }
 
     public Integer getCardAccId() {
         return cardAccId;
     }
-    public void setAccount(Account account) {
+    public void setAccount(int cardAccId) {
         this.cardAccId = cardAccId;
     }
 
@@ -45,7 +60,7 @@ public class BankCard implements Serializable {
     }
 
     public Integer getAmount() { return amount; }
-    public void setAmount(Integer amount) { this.amount = amount; }
+    public void setAmount(int amount) { this.amount = amount; }
 
     @Override
     public boolean equals(Object o) {
@@ -64,6 +79,7 @@ public class BankCard implements Serializable {
 
     @Override
     public String toString() {
-        return "{\"id\": " + id + ", \"account\": " + cardAccId + ", \"number\": " + number + ", \"amount\": " + amount + "}";
+        return "{\"id\": " + id + ", \"ownerId\": " + ownerId + ", \"account\": " + cardAccId + "," +
+                " \"number\": " + number + ", \"amount\": " + amount + "}";
     }
 }

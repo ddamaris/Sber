@@ -17,19 +17,23 @@ class DAO_CardTest {
         try {
             JdbcDataSource ds = new JdbcDataSource();
             ds.setUrl("jdbc:h2:~/test");
-            assertNotNull(ds.getConnection());
-
-        } catch (SQLException e) {
+            Connection connection = null;
+            connection = ds.getConnection();
+            assertNotNull(connection);
+            connection.close();
+        }
+        catch (SQLException e) {
             assertTrue(false);
         }
     }
     @Test
     void get_Valid() throws SQLException {
 
+        DeleteDbFiles.execute("~", "test1", true);
         JdbcDataSource ds = new JdbcDataSource();
-        ds.setUrl("jdbc:h2:~/test");
-
+        ds.setUrl("jdbc:h2:~/test1");
         Connection conn = ds.getConnection();
+
         Statement statement = conn.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS client (id SERIAL PRIMARY KEY,name TEXT NOT NULL)");
         statement.execute("CREATE TABLE IF NOT EXISTS account (id SERIAL PRIMARY KEY,acc_owner INTEGER REFERENCES client(id), acc_number INTEGER,amount INTEGER)");
@@ -46,18 +50,19 @@ class DAO_CardTest {
         conn.close();
 
         DAO<BankCard> card = new DAO_Card(ds);
+        BankCard testCard = card.get(3);
         assertEquals(3000, (int) card.get(3).getAmount());
-
-        DeleteDbFiles.execute("~", "test", true);
+        DeleteDbFiles.execute("~", "test1", true);
     }
 
     @Test
     void get_InValid() throws SQLException {
 
+        DeleteDbFiles.execute("~", "test1", true);
         JdbcDataSource ds = new JdbcDataSource();
-        ds.setUrl("jdbc:h2:~/test");
-
+        ds.setUrl("jdbc:h2:~/test1");
         Connection conn = ds.getConnection();
+
         Statement statement = conn.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS client (id SERIAL PRIMARY KEY,name TEXT NOT NULL)");
         statement.execute("CREATE TABLE IF NOT EXISTS account (id SERIAL PRIMARY KEY,acc_owner INTEGER REFERENCES client(id), acc_number INTEGER,amount INTEGER)");
@@ -75,17 +80,17 @@ class DAO_CardTest {
 
         DAO<BankCard> card = new DAO_Card(ds);
         assertEquals(null, card.get(4));
-
-        DeleteDbFiles.execute("~", "test", true);
+        DeleteDbFiles.execute("~", "test1", true);
     }
 
     @Test
     void getAll() throws SQLException {
 
+        DeleteDbFiles.execute("~", "test1", true);
         JdbcDataSource ds = new JdbcDataSource();
-        ds.setUrl("jdbc:h2:~/test");
-
+        ds.setUrl("jdbc:h2:~/test1");
         Connection conn = ds.getConnection();
+
         Statement statement = conn.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS client (id SERIAL PRIMARY KEY,name TEXT NOT NULL)");
         statement.execute("CREATE TABLE IF NOT EXISTS account (id SERIAL PRIMARY KEY,acc_owner INTEGER REFERENCES client(id), acc_number INTEGER,amount INTEGER)");
@@ -103,17 +108,17 @@ class DAO_CardTest {
 
         DAO<BankCard> card = new DAO_Card(ds);
         assertEquals(1, (int) card.getAllForClientById(1, 1).size());
-
-        DeleteDbFiles.execute("~", "test", true);
+        DeleteDbFiles.execute("~", "test1", true);
     }
 
     @Test
     void getAllNull() throws SQLException {
 
+        DeleteDbFiles.execute("~", "test1", true);
         JdbcDataSource ds = new JdbcDataSource();
-        ds.setUrl("jdbc:h2:~/test");
-
+        ds.setUrl("jdbc:h2:~/test1");
         Connection conn = ds.getConnection();
+
         Statement statement = conn.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS client (id SERIAL PRIMARY KEY,name TEXT NOT NULL)");
         statement.execute("CREATE TABLE IF NOT EXISTS account (id SERIAL PRIMARY KEY,acc_owner INTEGER REFERENCES client(id), acc_number INTEGER,amount INTEGER)");
@@ -122,17 +127,17 @@ class DAO_CardTest {
 
         DAO<BankCard> card = new DAO_Card(ds);
         assertTrue(card.getAllForClientById(1, 1).isEmpty());
-
-        DeleteDbFiles.execute("~", "test", true);
+        DeleteDbFiles.execute("~", "test1", true);
     }
 
     @Test
     void add() throws SQLException {
 
+        DeleteDbFiles.execute("~", "test1", true);
         JdbcDataSource ds = new JdbcDataSource();
-        ds.setUrl("jdbc:h2:~/test");
-
+        ds.setUrl("jdbc:h2:~/test1");
         Connection conn = ds.getConnection();
+
         Statement statement = conn.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS client (id SERIAL PRIMARY KEY,name TEXT NOT NULL)");
         statement.execute("CREATE TABLE IF NOT EXISTS account (id SERIAL PRIMARY KEY,acc_owner INTEGER REFERENCES client(id), acc_number INTEGER,amount INTEGER)");
@@ -151,17 +156,17 @@ class DAO_CardTest {
         DAO<BankCard> card = new DAO_Card(ds);
         card.add(new BankCard(0, 1, 1, "1111 1111 1111 2222", 234));
         assertEquals(2, (int) card.getAllForClientById(1, 1).size());
-
-        DeleteDbFiles.execute("~", "test", true);
+        DeleteDbFiles.execute("~", "test1", true);
     }
 
     @Test
     void delete() throws SQLException {
 
+        DeleteDbFiles.execute("~", "test1", true);
         JdbcDataSource ds = new JdbcDataSource();
-        ds.setUrl("jdbc:h2:~/test");
-
+        ds.setUrl("jdbc:h2:~/test1");
         Connection conn = ds.getConnection();
+
         Statement statement = conn.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS client (id SERIAL PRIMARY KEY,name TEXT NOT NULL)");
         statement.execute("CREATE TABLE IF NOT EXISTS account (id SERIAL PRIMARY KEY,acc_owner INTEGER REFERENCES client(id), acc_number INTEGER,amount INTEGER)");
@@ -181,16 +186,17 @@ class DAO_CardTest {
         card.delete(3);
         assertTrue(card.get(3) == null);
 
-        DeleteDbFiles.execute("~", "test", true);
+        DeleteDbFiles.execute("~", "test1", true);
     }
 
     @Test
     void update() throws SQLException {
 
+        DeleteDbFiles.execute("~", "test1", true);
         JdbcDataSource ds = new JdbcDataSource();
-        ds.setUrl("jdbc:h2:~/test");
-
+        ds.setUrl("jdbc:h2:~/test1");
         Connection conn = ds.getConnection();
+
         Statement statement = conn.createStatement();
         statement.execute("CREATE TABLE IF NOT EXISTS client (id SERIAL PRIMARY KEY,name TEXT NOT NULL)");
         statement.execute("CREATE TABLE IF NOT EXISTS account (id SERIAL PRIMARY KEY,acc_owner INTEGER REFERENCES client(id), acc_number INTEGER,amount INTEGER)");
@@ -207,10 +213,9 @@ class DAO_CardTest {
         conn.close();
 
         DAO<BankCard> card = new DAO_Card(ds);
-        String[] params = {"432"};
+        String[] params = {"432", "1"};
         card.update(3, params);
-        assertTrue(card.get(3).getAmount() == 432);
-
-        DeleteDbFiles.execute("~", "test", true);
+        assertEquals((int) card.get(3).getAmount(), 432);
+        DeleteDbFiles.execute("~", "test1", true);
     }
 }
