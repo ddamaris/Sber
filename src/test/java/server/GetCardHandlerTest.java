@@ -18,19 +18,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class GetCardHandlerTest {
 
     @Test
-    void handle() throws IOException, SQLException {
+    void handle() throws SQLException {
 
-        String id = "1";
+        try {
+            String id = "5";
 
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://localhost:8085/getone?cardId=" + id).openConnection();
-        InputStream response = connection.getInputStream();
-        Scanner in = new Scanner(response);
-        String jsonCard = in.nextLine();
-        System.out.println(jsonCard);
-        DAO_Card daoCard = new DAO_Card(DScreation.getDs());
-        BankCard card1 = daoCard.get(Integer.parseInt(id));
-        ObjectMapper mapper = new ObjectMapper();
-        BankCard card2 = mapper.readValue(jsonCard, BankCard.class);
-        assertEquals(card1, card2);
+            HttpURLConnection connection = (HttpURLConnection) new URL("http://localhost:8085/getone?cardId=" + id).openConnection();
+            InputStream response = connection.getInputStream();
+
+            Scanner in = new Scanner(response);
+            String jsonCard = in.nextLine();
+            System.out.println(jsonCard);
+            DAO_Card daoCard = new DAO_Card(DScreation.getDs());
+            BankCard card1 = daoCard.get(Integer.parseInt(id));
+            ObjectMapper mapper = new ObjectMapper();
+            BankCard card2 = mapper.readValue(jsonCard, BankCard.class);
+            assertEquals(card1, card2);
+        }
+        catch (IOException e){
+            System.out.println("No such Card");
+        }
     }
 }

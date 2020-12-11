@@ -17,14 +17,16 @@ public class GetCardHandler implements HttpHandler {
         String id = exchange.getRequestURI().toString().split("\\?")[1].split("=")[1];
         GetCard getCard = new GetCard();
         String card = getCard.getCard(Integer.parseInt(id));
+        System.out.println(card);
         if (card == null){
-            exchange.sendResponseHeaders( 400, card.length() );
+            exchange.sendResponseHeaders( 400, 0);
+            card = "No card with id: " + id;
         }
         else if(card.equals("DataBase request problem") || card.equals("Conversion problem")){
-            exchange.sendResponseHeaders( 500, card.length() );
+            exchange.sendResponseHeaders( 500, 0);
         }
         else {
-            exchange.sendResponseHeaders( 200, card.length() );
+            exchange.sendResponseHeaders( 200, 0);
         }
         OutputStream os = exchange.getResponseBody();
         os.write(card.getBytes(StandardCharsets.UTF_8));
